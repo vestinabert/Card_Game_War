@@ -1,7 +1,8 @@
+from random import shuffle
 class Deck:
     cards = []
     
     @staticmethod
-    def shuffle_cards():
-        """Shuffles cards in a deck"""
-        ...
+    def shuffle_cards(cls):
+        shuffle(cls.cards)
+        
