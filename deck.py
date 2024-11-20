@@ -12,4 +12,9 @@ class Deck:
 
     def shuffle(self):
         random.shuffle(self.cards)
+
+    def deal(self, num_cards):
+        hand = self.cards[:num_cards]
+        self.cards = self.cards[num_cards:]
+        return hand
         
