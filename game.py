@@ -1,6 +1,5 @@
 from deck import Deck
 from player import Player
-from card import Card
 
 class Game:
     """
@@ -11,14 +10,20 @@ class Game:
         player1 (Player): The first player in the game.
         player2 (Player): The second player in the game.
         round (int): The current round number of the game.
+        _max_rounds (int): The maximum number of rounds, or None if there is no round limit.
 
     Methods:
         start_game(): Shuffles the deck and deals cards to both players.
+        play_round(): Plays one round of the game, comparing cards and managing the result.
+        handle_war(): Handles the war scenario when a tie occurs.
+        check_winner(): Determines the winner of the game based on rounds or card count.
+        is_game_over(): Checks whether the game is over based on rounds or cards remaining.
     """
 
-    def __init__(self, player1_name, player2_name, max_rounds):
+    def __init__(self, player1_name: str, player2_name: str, max_rounds: int = None) -> None:
         """
         Initializes the Game instance with a deck, two players, and a round counter.
+        The game will continue indefinitely until a player runs out of cards if max_rounds is None.
         """
         self.deck = Deck()
         self.player1 = Player(player1_name)
@@ -26,7 +31,7 @@ class Game:
         self.round = 0
         self._max_rounds = int(max_rounds)
 
-    def start_game(self):
+    def start_game(self) -> None:
         """
         Prepares the game by shuffling the deck and dealing 26 cards to each player.
         """
@@ -34,11 +39,15 @@ class Game:
         self.player1.hand = self.deck.deal(26)
         self.player2.hand = self.deck.deal(26)
 
-    def play_round(self):
+    def play_round(self) -> bool:
+        """
+        Plays one round of the game, comparing the top card of both players.
+        Returns True if the round was played successfully, False if the game ends.
+        """
         self.round += 1
 
-        if self._max_rounds <= self.round:
-            print("Game over. Maximum rounds reached.")
+        if self.is_game_over():
+            print("Game over.")
             return False
         
         print(f"Round {self.round}:")
@@ -67,40 +76,61 @@ class Game:
             self.handle_war([card1], [card2])
 
         return True
-        
 
-    def handle_war(self, player1_card, player2_card):
-        print("It's a tie! Both players place 1 cards face down and reveal another card.")
-        if len(self.player1.hand) >= 2 or len(self.player2.hand) >= 2:
-            print("Not enough cards for a war!")
-            return False
-        war_cards1 = player1_card + [self.player1.draw_card() for _ in range(2)]
-        war_cards2 = player2_card + [self.player2.draw_card() for _ in range(2)]
-        print(f"{self.player1.name} plays: {war_cards1[-1]}")
-        print(f"{self.player2.name} plays: {war_cards2[-1]}")
+    def handle_war(self, player1_card: list, player2_card: list) -> None:
+        """
+        Handles the war scenario where both players play tied cards.
+        Each player places 1 card face down and reveals another.
+        """
+        while len(self.player1.hand) >= 2 and len(self.player2.hand) >= 2:
+            print("It's a tie! Both players place 1 card face down and reveal another card.")
+            war_cards1 = player1_card + [self.player1.draw_card() for _ in range(2)]
+            war_cards2 = player2_card + [self.player2.draw_card() for _ in range(2)]
+            print(f"{self.player1.name} plays: {war_cards1[-1]}")
+            print(f"{self.player2.name} plays: {war_cards2[-1]}")
 
-        war_comparison = war_cards1[-1].compare_to(war_cards2[-1])
-        if war_comparison > 0:
-            self.player1.hand.extend(war_cards1 + war_cards2)
-            print(f"{self.player1.name} wins the war!")
-        elif war_comparison < 0:
-            self.player2.hand.extend(war_cards1 + war_cards2)
-            print(f"{self.player2.name} wins the war!")
-        else:
-            print("War is also a tie!")
-            self.handle_war(war_cards1, war_cards2)
-
-    def check_winner(self):
-        if not self.player1.has_cards():
-            return f"{self.player2.name} wins the game!"
-        elif not self.player2.has_cards():
-            return f"{self.player1.name} wins the game!"
-        
-        if self._max_rounds <= self.round:
-            if len(self.player1.hand) > len(self.player2.hand):
-                return f"{self.player1.name} wins the game!"
-            elif len(self.player2.hand) > len(self.player1.hand):
-                return f"{self.player2.name} wins the game!"
+            war_comparison = war_cards1[-1].compare_to(war_cards2[-1])
+            if war_comparison > 0:
+                self.player1.hand.extend(war_cards1 + war_cards2)
+                print(f"{self.player1.name} wins the war!")
+                return
+            elif war_comparison < 0:
+                self.player2.hand.extend(war_cards1 + war_cards2)
+                print(f"{self.player2.name} wins the war!")
+                return
             else:
-                return "It's a tie! No winner."
-        return None
+                player1_card = war_cards1
+                player2_card = war_cards2
+
+        print("Not enough cards for a war!")
+
+    def is_game_over(self) -> bool:
+        """
+        Checks if the game is over. The game can end in two ways:
+        1. A round limit is reached.
+        2. One player has no cards left.
+        """
+        if self._max_rounds and self.round >= self._max_rounds:
+            return True
+        if not self._max_rounds and (not self.player1.has_cards() or not self.player2.has_cards()):
+            return True
+        return False
+
+    def check_winner(self) -> str:
+        """
+        Checks the winner of the game based on the remaining cards or rounds.
+        If no rounds limit, it checks who has more cards remaining.
+        """
+        if not self._max_rounds:
+            if not self.player1.has_cards():
+                return f"{self.player2.name} wins the game!"
+            elif not self.player2.has_cards():
+                return f"{self.player1.name} wins the game!"
+            return None
+
+        if len(self.player1.hand) > len(self.player2.hand):
+            return f"{self.player1.name} wins the game!"
+        elif len(self.player2.hand) > len(self.player1.hand):
+            return f"{self.player2.name} wins the game!"
+        else:
+            return "It's a tie! No winner."
