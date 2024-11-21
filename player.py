@@ -1,3 +1,5 @@
+from card import Card
+
 class Player:
     """
     Represents a player in a card game.
@@ -16,7 +18,7 @@ class Player:
         self.name = name
         self.hand = []
 
-    def draw_card(self):
+    def draw_card(self)->Card:
         """
         Removes and returns the top card from the player's hand.
 
