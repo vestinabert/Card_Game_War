@@ -15,7 +15,11 @@ def run_game():
     
     while True:
         keep_playing = game.play_round()
+
         if not keep_playing:
+            break
+
+        if game.is_game_over():
             break
 
     winner = game.check_winner()
