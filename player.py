@@ -11,3 +11,4 @@ class Player:
 
     def has_cards(self):
         return len(self.hand) > 0
+
