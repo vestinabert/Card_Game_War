@@ -5,3 +5,6 @@ class Player:
 
     def draw_card(self):
         return self.hand.pop(0) if self.hand else None
+    
+    def add_card(self, card):
+        self.hand.append(card)
