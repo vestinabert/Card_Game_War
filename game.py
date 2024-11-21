@@ -31,3 +31,28 @@ class Game:
         self.deck.shuffle()
         self.player1.hand = self.deck.deal(26)
         self.player2.hand = self.deck.deal(26)
+        self.game_loop()
+
+    def game_loop(self):
+        while True:
+            self.round += 1
+            self.game_round()
+
+    def game_round(self):
+        player_card = self.player1.draw_card()
+        cpu_card = self.player2.draw_card()
+        outcome = player_card.compare_to(cpu_card)
+        if outcome == 0:
+            #war
+            ...
+        elif outcome > 0:
+            #player wins
+            self.round_outcome([player_card, cpu_card], self.player1)
+        elif outcome < 0:
+            #cpu wins
+            self.round_outcome([player_card, cpu_card], self.player2)
+
+    def round_outcome(self, cards, winner: Player):
+        for card in cards:
+            winner.add_card(card)
+
