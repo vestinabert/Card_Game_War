@@ -14,9 +14,12 @@ class Game:
 
     Methods:
         start_game(): Shuffles the deck and deals cards to both players.
+        play_round(): Plays one round of the game, comparing cards and managing the result.
+        handle_war(): Handles the war scenario when a tie occurs.
+        check_winner(): Determines the winner of the game based on rounds or card count.
     """
 
-    def __init__(self, player1_name, player2_name, max_rounds):
+    def __init__(self, player1_name: str, player2_name: str, max_rounds: int) -> None:
         """
         Initializes the Game instance with a deck, two players, and a round counter.
         """
@@ -26,7 +29,7 @@ class Game:
         self.round = 0
         self._max_rounds = int(max_rounds)
 
-    def start_game(self):
+    def start_game(self) -> None:
         """
         Prepares the game by shuffling the deck and dealing 26 cards to each player.
         """
@@ -34,7 +37,7 @@ class Game:
         self.player1.hand = self.deck.deal(26)
         self.player2.hand = self.deck.deal(26)
 
-    def play_round(self):
+    def play_round(self) -> bool:
         self.round += 1
 
         if self._max_rounds <= self.round:
@@ -69,7 +72,7 @@ class Game:
         return True
         
 
-    def handle_war(self, player1_card, player2_card):
+    def handle_war(self, player1_card: list, player2_card: list) -> None:
         print("It's a tie! Both players place 1 cards face down and reveal another card.")
         if len(self.player1.hand) >= 2 or len(self.player2.hand) >= 2:
             print("Not enough cards for a war!")
@@ -90,7 +93,7 @@ class Game:
             print("War is also a tie!")
             self.handle_war(war_cards1, war_cards2)
 
-    def check_winner(self):
+    def check_winner(self) -> str:
         if not self.player1.has_cards():
             return f"{self.player2.name} wins the game!"
         elif not self.player2.has_cards():
