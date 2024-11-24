@@ -17,16 +17,15 @@ def run_game():
     game.start_game()
     
     while True:
-        keep_playing = game.play_round()
-
-        if not keep_playing:
-            break
 
         if game.is_game_over():
             break
 
-    winner = game.check_winner()
-    print(winner)
+        game.play_round()
+
+        
+
+    game.check_winner()
 
 if __name__ == "__main__":
     run_game()
