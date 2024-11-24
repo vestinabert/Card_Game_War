@@ -19,8 +19,8 @@ class Deck:
         """
         self.cards = []  # List to hold Card objects.
         suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
-        ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
-        
+        # ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
+        ranks = ['Jack', 'Queen', 'King', 'Ace']
         # Generate all 52 cards and add them to the deck.
         for suit in suits:
             for rank in ranks:

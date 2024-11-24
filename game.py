@@ -1,5 +1,6 @@
 from deck import Deck
 from player import Player
+import sys
 
 class Game:
     """
@@ -29,28 +30,35 @@ class Game:
         self.player1 = Player(player1_name)
         self.player2 = Player(player2_name)
         self.round = 0
-        self._max_rounds = int(max_rounds)
+
+        if max_rounds:
+            try:
+                self._max_rounds = int(max_rounds)
+                if self._max_rounds <= 0:
+                    raise ValueError("max_rounds must be a positive integer.")
+            except ValueError as e:
+                print(f"Error: {e}")
+                sys.exit(1)
+        else:
+            self._max_rounds = None
+
 
     def start_game(self) -> None:
         """
         Prepares the game by shuffling the deck and dealing 26 cards to each player.
         """
         self.deck.shuffle()
-        self.player1.hand = self.deck.deal(26)
-        self.player2.hand = self.deck.deal(26)
+        self.player1.hand = self.deck.deal(8)
+        self.player2.hand = self.deck.deal(8)
 
-    def play_round(self) -> bool:
+    def play_round(self) -> None:
         """
         Plays one round of the game, comparing the top card of both players.
         Returns True if the round was played successfully, False if the game ends.
         """
         self.round += 1
-
-        if self.is_game_over():
-            print("Game over.")
-            return False
         
-        print(f"Round {self.round}:")
+        print(f"Round {self.round}:     --------------------{len(self.player1.hand)} vs {len(self.player2.hand)}---------------------")
 
         card1 = self.player1.draw_card()
         card2 = self.player2.draw_card()
@@ -74,8 +82,6 @@ class Game:
             print(f"{self.player2.name} wins this round.")
         else:
             self.handle_war([card1], [card2])
-
-        return True
 
     def handle_war(self, player1_card: list, player2_card: list) -> None:
         """
@@ -103,6 +109,8 @@ class Game:
                 player2_card = war_cards2
 
         print("Not enough cards for a war!")
+        self.check_winner()
+       
 
     def is_game_over(self) -> bool:
         """
@@ -112,7 +120,10 @@ class Game:
         """
         if self._max_rounds and self.round >= self._max_rounds:
             return True
-        if not self._max_rounds and (not self.player1.has_cards() or not self.player2.has_cards()):
+        if self.round > 100:
+            print("Game is taking too long. Ending the game.")
+            return True
+        elif not self.player1.has_cards() or not self.player2.has_cards():
             return True
         return False
 
@@ -121,16 +132,11 @@ class Game:
         Checks the winner of the game based on the remaining cards or rounds.
         If no rounds limit, it checks who has more cards remaining.
         """
-        if not self._max_rounds:
-            if not self.player1.has_cards():
-                return f"{self.player2.name} wins the game!"
-            elif not self.player2.has_cards():
-                return f"{self.player1.name} wins the game!"
-            return None
 
         if len(self.player1.hand) > len(self.player2.hand):
-            return f"{self.player1.name} wins the game!"
+            print (f"{self.player1.name} wins the game!")
         elif len(self.player2.hand) > len(self.player1.hand):
-            return f"{self.player2.name} wins the game!"
+            print  (f"{self.player2.name} wins the game!")
         else:
-            return "It's a tie! No winner."
+            print ("It's a tie! No winner.")
+        sys.exit(1)
