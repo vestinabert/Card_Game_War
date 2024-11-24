@@ -1,5 +1,6 @@
 from deck import Deck
 from player import Player
+import sys
 
 class Game:
     """
@@ -29,7 +30,18 @@ class Game:
         self.player1 = Player(player1_name)
         self.player2 = Player(player2_name)
         self.round = 0
-        self._max_rounds = int(max_rounds)
+
+        if max_rounds:
+            try:
+                self._max_rounds = int(max_rounds)
+                if self._max_rounds <= 0:
+                    raise ValueError("max_rounds must be a positive integer.")
+            except ValueError as e:
+                print(f"Error: {e}")
+                sys.exit(1)
+        else:
+            self._max_rounds = None
+
 
     def start_game(self) -> None:
         """
@@ -112,7 +124,10 @@ class Game:
         """
         if self._max_rounds and self.round >= self._max_rounds:
             return True
-        if not self._max_rounds and (not self.player1.has_cards() or not self.player2.has_cards()):
+        if self.round > 100:
+            print("Game is taking too long. Ending the game.")
+            return True
+        elif not self._max_rounds and (not self.player1.has_cards() or not self.player2.has_cards()):
             return True
         return False
 
