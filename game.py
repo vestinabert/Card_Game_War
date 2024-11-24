@@ -123,7 +123,7 @@ class Game:
         if self.round > 100:
             print("Game is taking too long. Ending the game.")
             return True
-        elif not self._max_rounds and (not self.player1.has_cards() or not self.player2.has_cards()):
+        elif not self.player1.has_cards() or not self.player2.has_cards():
             return True
         return False
 
