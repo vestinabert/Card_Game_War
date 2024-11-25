@@ -1,8 +1,11 @@
 from game import Game
 from validation import validate_game_mode, validate_player_name, validate_rounds
+import pyfiglet
+
 
 def run_game():
-    print("Welcome to the War Card Game!")
+    ascii_art = pyfiglet.figlet_format("Welcome to the War Card Game!")
+    print(ascii_art)
 
     game_mode = validate_game_mode()
 
