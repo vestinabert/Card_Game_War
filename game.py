@@ -58,7 +58,8 @@ class Game:
         """
         self.round += 1
         
-        print(f"Round {self.round}:     --------------------{len(self.player1.hand)} vs {len(self.player2.hand)}---------------------")
+        print(f"-------------------- Round {self.round}:")
+        print(f"-------------------- {self.player1.name} has {len(self.player1.hand)} cards | {self.player2.name} has {len(self.player2.hand)} cards---------------------")
 
         card1 = self.player1.draw_card()
         card2 = self.player2.draw_card()
